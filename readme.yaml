@@ -1,0 +1,141 @@
+# 协议定义
+# 格式：
+# {
+# header:
+# data:{}
+# }
+
+###############
+# Node: movebase
+###############
+move_base_in:
+        header: init
+                data:''
+
+        header:speed
+        data:{
+                y:1
+                angle:''
+                speed:''
+                }
+         
+        header:heartbeat
+        data:None
+
+        # 障碍物无效
+        header:ob_invalid
+        data:None
+
+move_base_out:
+        header:base_info
+        data:{'left':[0,0,0,0], 'right':[0,0,0,0]}
+
+###############
+# Node:ctrl
+###############
+ctrl_in:
+        header:ctrl
+        data:''
+
+ctrl_out:
+        None
+
+###############
+# Node: pushimg
+###############
+pushimg_in:
+        header:camera_on
+        data:None
+
+        header:camera_off
+        data:None
+
+pushimg_out:
+        None
+
+###############
+# Node: rtk
+###############
+rtk_in:
+        None
+
+rtk_out:
+        header:rtk_position
+        data:{
+                'p':None,
+                'angle': 0.0,
+                'precision': 0.0,
+                'angle_precision':0.0,
+                'rtcm':'',
+                'rtk_mod':0
+                 }
+
+###############
+# Node: tcp 
+###############
+tcp_in:
+        header:cur_pos
+        data:[x, y, yaw]
+
+tcp_out:
+        All
+
+###############
+# Node: tracking
+# tracking list:  'cx':[x1, x2, ... , xn],
+#                 'cy':[y1, y2, ... , yn], 
+#                 'cyaw':[a1, a2, ... , an]
+#                 
+# track cmd list:[[x, y, ['cmd1', 'cmd2', ..., 'cmdn']],
+#                 [],
+#                 ...
+#                 [],
+#                 []
+#                ]
+###############
+tracking_in:
+        header:auto_on
+        data:{}
+
+        header:auto_off
+        data:None
+
+        header:auto_continue
+        data:None
+
+        header:get_pos
+        data:None
+
+tracking_out:
+        header:auto_on
+        data:{}
+
+        header:auto_off
+        data:None
+
+
+
+###############
+# Node: track_cmd
+###############
+track_cmd_in:
+        header:auto_on
+        data:{}
+
+        header:auto_off
+        data:None
+
+track_cmd_out:
+        None
+
+###############
+# Node:ultrasound 
+###############
+move_base_in:
+        header:ob_off
+        data:None
+
+
+###############
+# Node: 
+###############
