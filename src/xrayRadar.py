@@ -4,7 +4,7 @@ import serial
 import time
 from redisHandler import redisHandler
 
-class ultrasound(redisHandler):
+class xrayRadar(redisHandler):
 
     def __init__(self,port = None):
         # 超声波模块信息类

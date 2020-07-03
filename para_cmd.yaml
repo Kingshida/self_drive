@@ -1,4 +1,8 @@
 mission:
-  cmd: [!!python/unicode 'OUT10_OFF', !!python/unicode 'OUT11_OFF']
+  cmd:
+  - !!python/unicode 'OUT10_OFF'
+  - !!python/unicode 'OUT11_OFF'
   key: !!python/unicode 'L50sIUXTKz'
-robot: {key: 'null', name: 'robot:06-24 16:21'}
+robot:
+  key: 'null'
+  name: robot:06-24 16:21

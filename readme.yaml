@@ -1,3 +1,16 @@
+# dependes:
+# requests
+# pyyaml
+# redis
+# pyserial
+# minimalmodbus
+# numpy
+# opencv-python
+# scipy
+# pyttsx
+#
+# env dependes: espeak, redis, python2.7
+
 # 协议定义
 # 格式：
 # {

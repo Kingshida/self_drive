@@ -30,4 +30,4 @@ class systemCtrl():
 
 if __name__ == '__main__':
     voice = systemCtrl()
-    # voice.say(123)
+    voice.say(123)

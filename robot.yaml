@@ -1,1 +1,3 @@
-robot: {key: !!python/unicode '7fjeA', name: 开沟}
+robot:
+  key: !!python/unicode '7fjeA'
+  name: 开沟
