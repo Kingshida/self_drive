@@ -10,6 +10,7 @@ from joy import joy
 from rtk import rtk
 from pushImg import pushImg
 from ultrasound import ultrasound
+from trackSwing import trackSwing
 
 
 if __name__ == '__main__':
@@ -30,22 +31,34 @@ if __name__ == '__main__':
     p = Process(target=node.run)
     p_list.append(p)
 
+    # '''
     node = joy()
     p = Process(target=node.run)
     p_list.append(p)
+    # '''
 
+    # '''
     node = rtk()
     p = Process(target=node.run)
     p_list.append(p)
+    # '''
+    
+    '''
+    node = trackSwing()
+    p = Process(target=node.run)
+    p_list.append(p)
+    # '''
 
+    '''
     node = pushImg()
     p = Process(target=node.run)
     p_list.append(p)
+    # '''
     '''
     node = ultrasound()
     p = Process(target=node.run)
     p_list.append(p)
-    '''
+    # '''
     try: 
         for p in p_list:
             p.daemon = True

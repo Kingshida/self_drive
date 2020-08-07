@@ -33,7 +33,7 @@ class Motor:
             'U':0x426b,             # 电机电压值
             'nominal_speed':0x42e8, # 电机额定速度0.1r/min
         }
-        self._max_speed = 3000
+        self._max_speed = 2500
         self._enable_status = False
         self._id = id
         self._motor = minimalmodbus.Instrument(port, id, debug=False    )

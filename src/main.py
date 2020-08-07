@@ -23,6 +23,7 @@ class main(redisHandler):
     def run(self):
         self.init()
         auto_flag = False
+        # auto_flag = True
         while True:
             try:
                 data = self.q_get()
@@ -34,7 +35,7 @@ class main(redisHandler):
                     print('channel:%s, data: %s'%(channel, data))
                     if channel == 'tcp_out':
                         if header in self.move_base_header:
-                            if not auto_flag:
+                            if not auto_flag or header == 'get_base_info':
                                 self.rc.publish('move_base_in', data)
                         elif header in self.ctrl_header:
                             if not auto_flag:

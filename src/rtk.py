@@ -24,7 +24,7 @@ class rtk(redisHandler):
                 'p':None,
                 'angle': 0.0,
                 'precision': 0.0,
-                'angle_precision':0.0,
+                # 'angle_precision':0.0,
                 'rtcm':'',
                 'rtk_mod':0
                 }
@@ -72,7 +72,7 @@ class rtk(redisHandler):
                         p = self.__position['p']
                         p = p + self.wgs84.translation
                         # print(p.shape, self.wgs84.rotation.shape)
-                        self.__position['p'] =np.dot(p, self.wgs84.rotation).tolist()
+                        self.__position['p'] =[round(v, 3) for v in np.dot(p, self.wgs84.rotation).tolist()]
                         # print(self.__position)
                         # redis 发布
                         now = time.time()
@@ -86,11 +86,24 @@ class rtk(redisHandler):
                     elif 'HEADINGA' in data:
                         data = data.split(';')[1]
                         data = data.split(',')
-                        self.__position['angle'] = math.radians(360 - float(data[3]))
-                        self.__position['precision_angle'] = float(data[6])
+                        if not data[3]:
+                            self.__position['rtk_mod'] = -1
+                            continue
+                        self.__position['angle'] = round(math.radians(360 - float(data[3])), 1)
+                        # self.__position['precision_angle'] = float(data[6])
+                    elif 'GNHDT' in data:
+                        data = data.split(',')
+                        if not data[1]:
+                            self.__position['rtk_mod'] = -1
+                            continue
+                        angle = (540 - float(data[1])) % 360
+                        self.__position['angle'] = round(math.radians(angle), 3)
+                        # print(angle)
+                        # self.__position['angle'] = math.radians(float(data[1])-180)
             except Exception as e:
-                print('rtk err')
-                print(e)
+                pass
+                # print('rtk err')
+                # print(e)
 
 
 

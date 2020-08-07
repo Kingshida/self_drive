@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['track_cmd.py'],
-             pathex=['/home/sweet/workspace/self_drive_rtk/src'],
+             pathex=['/home/sweet/workspace/self_drive/src'],
              binaries=[],
              datas=[],
              hiddenimports=[],

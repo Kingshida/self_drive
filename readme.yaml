@@ -148,6 +148,16 @@ move_base_in:
         header:ob_off
         data:None
 
+###############
+# Node: radar
+###############
+radar_out:
+        header:radar_ob
+        data:[ox, oy]
+
+        header:radar_err
+        data:[[],[]]
+
 
 ###############
 # Node: 

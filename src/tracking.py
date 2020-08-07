@@ -86,6 +86,7 @@ class TargetCourse:
             dy = [state.y - icy for icy in self.cy]
             # 欧几里得范数
             d = np.hypot(dx, dy)
+            # print(d)
             #　最小值下标
             ind = np.argmin(d)
             # 求第二小距离下标
@@ -242,7 +243,7 @@ def diff_speed_control(state, trajectory, pind):
         # 角度180-360
         yaw_ba = 6.28 - yaw_ba
     
-    yaw_bc = (yaw0 % (2 * math.pi) - yaw0 % (2 * math.pi)) % (2 * math.pi)
+    yaw_bc = (yaw0 % (2 * math.pi) - yaw1 % (2 * math.pi)) % (2 * math.pi)
     direction = 1
     # print(yaw0, yaw1, yaw_bc)
     # if dot_ba < 0 and dot_bc > 0:
@@ -272,7 +273,7 @@ def speed_pid(pre_d, d, dyaw, dt, direction):
     # 轮差机器人pid控制
     if not pre_d:
         pre_d = d
-    kp = 0.600
+    kp = 0.900
     kd = 0.8000
     
     k = 0.0
@@ -333,6 +334,7 @@ class tracking(redisHandler):
                     # 路径点
                     target_course = TargetCourse(cx, cy, cyaw)
                     # 向前规划终点路径的indx
+                    print('get_mission: {}'.format(key))
                     target_ind, _ = target_course.search_target_index(state)
                     return [cx, cy, cyaw, lastIndex, goal, target_course, target_ind]
             except Exception as e:
@@ -394,8 +396,12 @@ class tracking(redisHandler):
         kd_t = 0.0      # 一个周期时间
         pre_time = time.time()  # 上一周期时间
         tracking_flag = False
+        tmp_flag = False
         while True:
             data = self.q_get_nowait()
+            if not tracking_flag:
+                # 如果在自动未运行, sleep
+                time.sleep(0.1)
             if data:
                 # 收到订阅的消息
                 header = data['header']
@@ -407,12 +413,19 @@ class tracking(redisHandler):
             if header == 'rtk_position':
                 # rtk 位置信息
                 position = data
+                # if position['rtk_mod'] == 4 or position['rtk_mod'] == 5:
                 if position['rtk_mod'] == 4:
                     state.x = position['p'][0]
                     state.y = position['p'][1]
                     state.yaw = position['angle']
+                    if not tracking_flag:
+                        # 如果在自动未运行, 跳过
+                        continue
+                    # 自动运行主要程序模块
                     delta_pose = math.sqrt(math.pow(goal[0]-state.x, 2) + math.pow(goal[1]-state.y, 2))
-                    if (delta_pose < delta_goal * 10) and (target_ind + 5 >= lastIndex) and tracking_flag:
+
+                    if (delta_pose < delta_goal * 20) and (target_ind + 20 >= lastIndex) and tracking_flag:
+                        # 接近目标点，减速
                         data_speed['data']['speed'] = max_speed * 0.3
                     if delta_pose < delta_goal and (target_ind + 1 >= lastIndex) and tracking_flag:
                         # 到达目标点
@@ -501,7 +514,8 @@ class tracking(redisHandler):
                 # 停止运行
                 data_speed['data']['angle'] = 0
                 data_speed['data']['y'] = 0
-                rc.publish('tcp_out', json.dumps(data_speed))
+                rc.publish('move_base_in', json.dumps(data_speed))
+                # rc.publish('tcp_out', json.dumps(data_speed))
             elif header == 'get_pos':
                 # 当前坐标发送
                 pos_msg = {

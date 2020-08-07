@@ -105,22 +105,25 @@ class moveBase(redisHandler):
         """
         # 根据车体样式更改，前后，左右
         # y = -y
-        # angle = -angle
+        angle = -angle
         l = 0.0
         r = 0.0
+        angle = 2 * sin(angle)
         if angle >= 0:
             l = 1
-            r = - 1 + 2 * sin(angle)
+            r = - 1 + angle
         else:
             r = -1
-            l = 1 + 2 * sin(angle)
+            l = 1 + angle
         l  = l * speed / 100.0 * y
-        r  = r * speed / 100.0 * y
-        # print('speed_l: ', l, 'speed_r: ', r)
+        # direction adjust
+        r  = -r * speed / 100.0 * y
+        print('speed_l: ', l, 'speed_r: ', r)
         self.left_wheel.write_speed(l)
         # self.left_wheel1.write_speed(l)
         self.right_wheel.write_speed(r)
         # self.right_wheel1.write_speed(r)
+        print(self.read_base_info())
         return True
 
     def read_speed(self):

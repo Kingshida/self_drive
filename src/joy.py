@@ -20,11 +20,24 @@ class joy(redisHandler):
         if self.ser.in_waiting:
             data = self.ser.read_until('#')
             if data:
+                print(data)
                 if data[0] == '*':
                     if data == '*JOYON#':
                         # 手柄打开
                         self.ser.write(data)
                         self.joy_on = True
+                    elif data == '*auto_off#':
+                        # ctrl_in消息
+                        res = {
+                                'header':'auto_off',
+                                'data':''
+                                }
+                    elif data == '*auto_continue#':
+                        # ctrl_in消息
+                        res = {
+                                'header':'continue',
+                                'data':''
+                                }
                     else:
                         # ctrl_in消息
                         res = {
