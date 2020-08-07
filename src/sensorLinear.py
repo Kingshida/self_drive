@@ -58,7 +58,7 @@ if __name__ == '__main__':
     dev = sensorLinear(03, '/dev/ttyS5')
     print "####enable############"
     # dev.set_id(3)
-    dev.read_pos()
+    print(dev.read_pos())
     time.sleep(2)
     dev.read_pos()
     time.sleep(2)
