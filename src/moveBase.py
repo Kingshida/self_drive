@@ -59,15 +59,15 @@ class moveBase(redisHandler):
                 data = data['data']
                 if header == 'init':
                     # 初始化
-                    pre_time = time.time()
+                    pre_time = now
                     self.init_motor()
                 elif header == 'speed' and (not (ob_flag and self.ob_isvalid)):
                     # 无障碍物，或者障碍物传感器未启用，速度发送
-                    pre_time = time.time()
+                    pre_time = now
                     self.write_speed(data['y'], data['angle'], data['speed'])
                 elif header == 'heartbeat':
                     # 心跳
-                    pre_time = time.time()
+                    pre_time = now
                     base_info = self.read_base_info()
                     data_pub = {
                             'header':'base_info',
@@ -84,7 +84,7 @@ class moveBase(redisHandler):
                     self.pub_all(data_pub)
                 elif header == 'ob_invalid':
                     # 无障碍物
-                    pre_t_ob = time.time()
+                    pre_t_ob = now
                     ob_flag = False
                 elif header == 'ob_on':
                     # 开启障碍物检测
@@ -105,7 +105,7 @@ class moveBase(redisHandler):
         """
         # 根据车体样式更改，前后，左右
         # y = -y
-        angle = -angle
+        # angle = -angle
         l = 0.0
         r = 0.0
         angle = 2 * sin(angle)
@@ -117,7 +117,7 @@ class moveBase(redisHandler):
             l = 1 + angle
         l  = l * speed / 100.0 * y
         # direction adjust
-        r  = -r * speed / 100.0 * y
+        r  = r * speed / 100.0 * y
         print('speed_l: ', l, 'speed_r: ', r)
         self.left_wheel.write_speed(l)
         # self.left_wheel1.write_speed(l)

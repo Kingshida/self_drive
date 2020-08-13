@@ -15,7 +15,7 @@ class main(redisHandler):
         self.move_base_header = ['init', 'speed', 'heartbeat', 'get_base_info']
         self.ctrl_header = ['ctrl']
         self.pushimg_header = ['camera_on', 'camera_off']
-        self.tracking_header = ['auto_on', 'auto_off', 'get_pos', 'auto_continue']
+        self.tracking_header = ['auto_on', 'auto_off', 'get_pos', 'auto_continue', 'speed']
 
         self.sys_ctrl = systemCtrl.systemCtrl()
         self.start_sub()

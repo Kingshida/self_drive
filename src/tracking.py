@@ -349,6 +349,7 @@ class tracking(redisHandler):
         delta_goal = 0.25
         # 最大速度
 	max_speed = 90
+        speed_scale = 1
         # to movebase通信格式
         data_speed = {
                 'header':'speed',
@@ -438,7 +439,7 @@ class tracking(redisHandler):
                         rc.publish('tcp_out', json.dumps(data_main))
                         tracking_flag = False
                         pre_d = None
-                        data_speed['data']['speed'] = max_speed
+                        data_speed['data']['speed'] = max_speed * speed_scale
                     else:
                         # 获取跟踪路径信息 
                         d, dyaw, direction, target_ind, dotba = diff_speed_control(state, target_course, target_ind)
@@ -523,6 +524,12 @@ class tracking(redisHandler):
                         'data': [state.x, state.y, state.yaw]
                         }
                 rc.publish('tcp_in', json.dumps(pos_msg))
+
+            elif header == 'speed':
+                # 最高速度
+                speed_scale = data
+                data_speed['data']['speed'] = max_speed * speed_scale
+                print(data_speed)
 
             '''
             if show_animation:  # pragma: no cover

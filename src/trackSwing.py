@@ -26,7 +26,7 @@ class trackSwing(redisHandler):
         self.mission_length = 125
         
 
-        self.motor = Motor(2, '/dev/ttyS5')
+        self.motor = Motor(1, '/dev/ttyS5')
         self.motor_init()
 
         self.sensor = sensorLinear(3, '/dev/ttyS5')

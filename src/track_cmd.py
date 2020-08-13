@@ -29,6 +29,9 @@ class track_cmd(redisHandler):
         self.sub_topics = ['rtk_out', 'tracking_in']
         self.pub_topics = ['ctrl_in']
         self.config = config('para_cmd.yaml') 
+        # 上一次命令内容
+        self.last_dict_cmd = []
+        self.last_list_cmd = []
         # 任务目标kdtree
         self.kdtree = None
         # 任务列表
@@ -71,6 +74,10 @@ class track_cmd(redisHandler):
     def exc_cmd_list(self, x, y, cmd_list):
         for i in range(len(cmd_list)):
             item = cmd_list[i]
+            cmd = item[1]
+            if self.last_list_cmd == cmd:
+                # 与上次执行的命令一样,跳过
+                continue
             # 当前点p0
             x0 = item[0][0]
             y0 = item[0][1]
@@ -100,13 +107,27 @@ class track_cmd(redisHandler):
                 if len_e <= self.delta and k > 0:
                     # 当前点在yaw0的锐角方向，且误差小于delta_goal_list
                     # 保存运行记录
-                    cmd = item[1]
                     self.data_config['cmd'] = cmd
                     self.config.set_para(self.para_mission_key, self.data_config)
+
+                    self.last_list_cmd = cmd
+                    print('list cmd is: {}'.format(cmd))
                     for i_cmd in cmd:
-                        print(i_cmd)
+                        if 'speed:' in i_cmd:
+                            # 改变速度
+                            try:
+                                speed = float(i_cmd.split(":")[-1])
+                                tmp_data = {
+                                        'header':'speed',
+                                        'data': speed
+                                        }
+                                self.rc.publish('tracking_in', json.dumps(tmp_data))
+                            except Exception as e:
+                                print(e)
+                            continue
                         self.data_cmd['data'] = i_cmd
                         self.pub_all(self.data_cmd)
+                        self.last_list_cmd = i_cmd
                         time.sleep(0.2)
                     return i
         return None
@@ -168,13 +189,16 @@ class track_cmd(redisHandler):
 
         if is_close:
             cmd_ind = 1
-
         cmd = cmd_list['cmd'][cmd_ind]
+        if self.last_dict_cmd == cmd:
+            # 与上次执行的命令一样,跳过
+            return
         # 保存运行记录
-        self.data_config['cmd'] = cmd
-        self.config.set_para(self.para_mission_key, self.data_config)
+        # self.data_config['cmd'] = cmd
+        # self.config.set_para(self.para_mission_key, self.data_config)
+        self.last_dict_cmd = cmd
+        print('dict cmd is: {}'.format(cmd))
         for i_cmd in cmd:
-            # print(i_cmd)
             self.data_cmd['data'] = i_cmd
             self.pub_all(self.data_cmd)
             time.sleep(0.2)
@@ -236,7 +260,6 @@ class track_cmd(redisHandler):
 
 
             elif header == 'auto_continue':
-                print('auto_continue')
                 # 继续上次任务
                 if tracking_flag:
                     # 如果在自动运行中，则跳过
@@ -263,6 +286,7 @@ class track_cmd(redisHandler):
 
             elif header == 'auto_off':
                 # 关闭自动
+                print('auto_off')
                 tracking_flag = False
 
 

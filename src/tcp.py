@@ -128,6 +128,7 @@ class tcp(redisHandler):
         while True:
             now = time.time()
             if now - pre_server_t > self.timeout:
+                # 心跳超时
                 self.robot_on()
                 pre_server_t = now
             if now - pre_time >= self.timeout / 3.0:

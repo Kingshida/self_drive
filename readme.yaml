@@ -119,6 +119,8 @@ tracking_in:
         header:get_pos
         data:None
 
+        header:speed
+        data:float
 tracking_out:
         header:auto_on
         data:{}
