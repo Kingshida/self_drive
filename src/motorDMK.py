@@ -9,7 +9,7 @@ class Motor:
     """
     驱动轮类模块, 蓝色驱动器
     """
-    def __init__(self, id, port):
+    def __init__(self, dev_id, port):
         """
         初始化函数
         :param id: 电机从地址id
@@ -31,7 +31,7 @@ class Motor:
             'err_code': 0x0072,     # 错误代码
         }
         self._max_speed = 2500
-        self._id = 1
+        self._id = dev_id
         self._motor = minimalmodbus.Instrument(port, self._id, debug=False)
         self._motor.serial.baudrate = 9600
         self.ini_motor()

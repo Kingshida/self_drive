@@ -9,7 +9,7 @@ class Motor:
     """
     驱动轮类模块
     """
-    def __init__(self, id, port):
+    def __init__(self, dev_id, port):
         """
         初始化函数
         :param id: 电机从地址id
@@ -35,8 +35,8 @@ class Motor:
         }
         self._max_speed = 2500
         self._enable_status = False
-        self._id = id
-        self._motor = minimalmodbus.Instrument(port, id, debug=False    )
+        self._id = dev_id
+        self._motor = minimalmodbus.Instrument(port, self._id, debug=False    )
         self._motor.serial.baudrate = 9600
         self.ini_motor()
 
@@ -50,7 +50,7 @@ class Motor:
             self._enable_status = self.enable()
             return True
         except BaseException as e:
-            # print e
+            print e
             time.sleep(2)
             return False
 

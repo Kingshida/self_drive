@@ -5,10 +5,10 @@ import json
 import time
 from math import cos, sin
 import serialCmd
-# from motorTongyiIxL import Motor
+from motorTongyiIxL import Motor
 # from motorDMK import Motor
 # from motor055a import Motor
-from motorBLD50 import Motor
+# from motorBLD50 import Motor
 from redisHandler import redisHandler
 
 
@@ -23,7 +23,7 @@ class moveBase(redisHandler):
         self.sub_topics = ['move_base_in']
         self.left_wheel = Motor(1, '/dev/ttyS2')
         # self.left_wheel1 = Motor(1, '/dev/ttyS2')
-        self.right_wheel = Motor(2, '/dev/ttyS2')
+        self.right_wheel = Motor(1, '/dev/ttyS3')
         # self.right_wheel1 = Motor(2, '/dev/ttyS3')
         self.base_info = {'left':[0,0,0,0], 'right':[0,0,0,0]}
         self.init_motor()

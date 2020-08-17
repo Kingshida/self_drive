@@ -9,7 +9,7 @@ class Motor:
     """
     驱动轮类模块, 蓝色驱动器
     """
-    def __init__(self, id, port):
+    def __init__(self, dev_id, port):
         """
         初始化函数
         :param id: 电机从地址id
@@ -27,7 +27,7 @@ class Motor:
             'i':0x00c6,             # 电流
         }
         self._max_speed = 2500
-        self._id = 1
+        self._id = dev_id
         self._motor = minimalmodbus.Instrument(port, self._id, debug=False)
         self._motor.serial.baudrate = 9600
         self.ini_motor()
@@ -35,9 +35,9 @@ class Motor:
     def ini_motor(self):
         try:
             print('init motoring')
-            self._motor.write_register(self._addr_data['485_enable'], 1)
+            self._motor.write_register(self._addr_data['485_enable'], 1, functioncode=6)
             self._motor.write_register(self._addr_data['fix_speed'], 0, functioncode=6)
-            self._motor.write_register(self._addr_data['enable'], 0, functioncode=6)
+            self._motor.write_register(self._addr_data['enable'], 1, functioncode=6)
         except Exception as e:
             print(e)
 
@@ -94,10 +94,13 @@ class Motor:
 
 
 if __name__ == '__main__':
-    wheel = Motor(01, '/dev/ttyS2')
+    wheel = Motor(02, '/dev/ttyS2')
     print "####enable############"
     print wheel.ini_motor()
-    print(wheel.write_speed(-0.5))
+    print(wheel.write_speed(0.2))
     print(wheel.read_base_info())
     time.sleep(5)
+    print(wheel.write_speed(-0.2))
     print(wheel.read_base_info())
+    time.sleep(5)
+    print(wheel.write_speed(0.0))
