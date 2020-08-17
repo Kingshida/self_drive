@@ -1,8 +1,8 @@
 mission:
-  key: !!python/unicode '3oKuemIxwO'
-  old_ind: 659
-  path_len: 664
-  target_ind: 662
+  key: !!python/unicode '4IatYRcLlE'
+  old_ind: 326
+  path_len: 663
+  target_ind: 327
 robot:
   key: 'null'
   name: robot:06-24 15:35

@@ -17,9 +17,19 @@ class ctrl(redisHandler):
    
     def run(self):
         self.init()
+        heartbeat = 2.0
+        pre_t = time.time()
         while True:
             try:
-                data = self.q_get()
+                now = time.time()
+                if now - pre_t > heartbeat:
+                    # 心跳
+                    if not self.ser.serial.isOpen():
+                        self.ser.open_port()
+                    self.ser.send_cmd('*ASK#')
+                    pre_t = now
+
+                data = self.q_get_nowait()
                 if data:
                     data = data['data']
                     data = '*' + str(data) + '#'
@@ -27,6 +37,8 @@ class ctrl(redisHandler):
                     if not self.ser.serial.isOpen():
                         self.ser.open_port()
                     self.ser.send_cmd(data)
+                else:
+                    time.sleep(0.2)
             except Exception as e:
                 print('ctrl err')
                 print(e)

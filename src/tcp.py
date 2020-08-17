@@ -130,6 +130,7 @@ class tcp(redisHandler):
             if now - pre_server_t > self.timeout:
                 # 心跳超时
                 self.robot_on()
+                now = time.time()
                 pre_server_t = now
             if now - pre_time >= self.timeout / 3.0:
                 # 向服务器发送心跳，保持连接
@@ -139,7 +140,6 @@ class tcp(redisHandler):
                     t = self.sock.sendall(heartbeat)
                 except Exception as e:
                     print(e)
-                    self.robot_on()
 
             data = self.q_get_nowait()
             data_recv = self.recv_q_get()

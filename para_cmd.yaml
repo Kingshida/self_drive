@@ -1,7 +1,7 @@
 mission:
   cmd:
-  - !!python/unicode 'OUT11_OFF'
-  key: !!python/unicode '3oKuemIxwO'
+  - !!python/unicode 'OUT10_ON'
+  key: !!python/unicode '4IatYRcLlE'
 robot:
   key: 'null'
   name: robot:06-24 16:21

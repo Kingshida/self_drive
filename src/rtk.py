@@ -21,7 +21,7 @@ class rtk(redisHandler):
         self.wgs84 = WGS84(self.base_lon, self.base_lat, self.base_h)
         self.__ser = serial.Serial(port, bps, timeout=timeout)
         self.__position = {
-                'p':None,
+                'p':[0,0],
                 'angle': 0.0,
                 'precision': 0.0,
                 # 'angle_precision':0.0,
@@ -74,6 +74,14 @@ class rtk(redisHandler):
                         # print(p.shape, self.wgs84.rotation.shape)
                         self.__position['p'] =[round(v, 3) for v in np.dot(p, self.wgs84.rotation).tolist()]
                         # print(self.__position)
+                    elif 'HEADINGA' in data:
+                        # 联适rtk
+                        data = data.split(';')[1]
+                        data = data.split(',')
+                        if not data[3]:
+                            self.__position['rtk_mod'] = -1
+                            continue
+                        self.__position['angle'] = round(math.radians(360 - float(data[3])), 1)
                         # redis 发布
                         now = time.time()
                         if now - pre_time >= 1.0 / hz:
@@ -83,23 +91,33 @@ class rtk(redisHandler):
                                     'data':self.__position
                                     }
                             self.pub_all(pub_data)
-                    elif 'HEADINGA' in data:
-                        data = data.split(';')[1]
-                        data = data.split(',')
-                        if not data[3]:
-                            self.__position['rtk_mod'] = -1
-                            continue
-                        self.__position['angle'] = round(math.radians(360 - float(data[3])), 1)
                         # self.__position['precision_angle'] = float(data[6])
                     elif 'GNHDT' in data:
+                        # 梦芯rtk
                         data = data.split(',')
                         if not data[1]:
                             self.__position['rtk_mod'] = -1
                             continue
                         angle = (540 - float(data[1])) % 360
+                        # '''
+                        # 平移至车体中心
+                        x = self.__position['p'][0]
+                        y = self.__position['p'][1]
+                        rx = -0.5
+                        ry = 0.0
+                        tx = cos(angle) * rx - sin(angle) * ry
+                        ty = sin(angle) * rx + cos(angle) * ry
+                        self.__position['p'][0] += tx
+                        self.__position['p'][1] += ty
+                        # '''
                         self.__position['angle'] = round(math.radians(angle), 3)
+                        # redis 发布
+                        pub_data = {
+                                'header': 'rtk_position',
+                                'data':self.__position
+                                }
+                        self.pub_all(pub_data)
                         # print(angle)
-                        # self.__position['angle'] = math.radians(float(data[1])-180)
             except Exception as e:
                 pass
                 # print('rtk err')
